@@ -5,6 +5,13 @@ Contains all necessary functions for the game
 
 import os
 
+from card import Hand
+from helper import clear
+
+
+# from blackjack import clear
+
+
 def player_choice(hand,chip):
     '''
     This function accepts and validates the choice of what the user's next move will be.
@@ -38,21 +45,22 @@ def player_turn(hand_player,hand_dealer,chip,deck):
     Returns True if they can continue or False if they have lost.
     '''
     outcome = True
-    choice = player_choice(hand_player,chip)
+    print(f"Deck expectancy: {deck.expectancy()}")
+    choice ="H" if hand_player.value()+deck.expectancy()<21 else "S"
+    # choice = player_choice(hand_player,chip)
     
     while True:
         if choice == 'S':
-            os.system('cls')
-
+            clear()
             print("You have decided to Stand!")
             print("Moving on to the dealer!")
             break
             
         if choice == 'H':
-            os.system('cls')
-
+            clear()
             hand_player.add_card(deck.deal())
             print("You have decided to Hit! Here are your new cards")
+            print(f"Deck expectancy: {deck.expectancy()}")
             display_cards(hand_player,hand_dealer)
             
             if hand_player.value() > 21:
@@ -62,12 +70,14 @@ def player_turn(hand_player,hand_dealer,chip,deck):
                 break
             
             else:
-                choice = player_choice(hand_player,chip)
+                # print(f"Deck expectancy: {deck.expectancy()}")
+                # choice = player_choice(hand_player,chip)
+                choice = "H" if hand_player.value() + deck.expectancy() < 21 else "S"
                 continue
                 
         if choice == 'DD':
-            os.system('cls')
-
+            # os.system('cls')
+            clear()
             print("You have decided to Double Down! Here are you're new cards!")
             chip.bet = chip.bet * 2
             hand_player.add_card(deck.deal())
@@ -129,13 +139,13 @@ def choice_to_continue():
     valid_options = ['Y','N']
     choice = 'wrong'
     
-    while choice not in valid_options:
-        choice = input("Do you want to play another round (Y os N)?")
-        
-        if choice not in valid_options:
-            print("Select a valid option!")
-        else:
-            return choice == 'Y'
+    # while choice not in valid_options:
+    #     choice = input("Do you want to play another round (Y os N)?")
+    #
+    #     if choice not in valid_options:
+    #         print("Select a valid option!")
+    #     else:
+    return 'Y'
             
 
 def display_cards(hand_player=0,hand_dealer=0):
@@ -148,16 +158,17 @@ def display_cards(hand_player=0,hand_dealer=0):
         
         for card in hand_player.cards:
             print(card,end=' ')
-        print()
+        print(f"{Hand('OB',hand_player.cards).value()}")
+        # print(f"{hand_player.value()}")
     
     if hand_dealer:
         print(f"Dealer's cards ->", end = ' ')
 
         for card in hand_dealer.cards:
             print(card,end=' ')
-        
+        print(f"{Hand('Dealer',hand_dealer.cards).value()}")
     print('\n')
-       
+
 
 if __name__ == '__main__':
     print("This is game.py module, please open blackjack.py")
